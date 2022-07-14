@@ -3,16 +3,6 @@ function getLongURL() {
     return longURL;
 }
 
-function printShortURL(response) {
-
-    const article_header =
-        '<header><h2>Shortened URL</h2></header>';
-
-    var shortenedURLContent = `${article_header}<p id="short-URL"><a href="${response}" target="_blank" rel="noreferrer noopener">${response}  ↗️</a></p>`;
-
-    $('#short-URL-subcontainer').html(shortenedURLContent);
-}
-
 function shortenURL() {
     var longURL = getLongURL();
 
@@ -24,18 +14,38 @@ function shortenURL() {
         },
         body: JSON.stringify({ 'long_url': longURL, 'domain': 'bit.ly' })
     })
-        .then((response) => {
+        .then(function (response) {
+            if (response.status != 200 && response.status != 201) {
+                alert(`Error. Status code: ${response.status}`);
+            }
             return response.json();
         }).then((data) => {
-            printShortURL(data.link);
-            $('html, body').css('height', 'max-content');
-            copyToClipboard(data.link);
+            if (data.link == null) {
+                return;
+            } else {
+                printShortURL(data.link);
+            }
+        });
+}
+
+function printShortURL(link) {
+    $.ajax({
+        type: 'GET',
+        url: 'src/shortened.php',
+        data: {
+            short_URL: link,
+        },
+        success: function (response) {
+            if ($('#short-URL-container').length) {
+                $('#short-URL-container').replaceWith(response);
+            } else {
+                $('#shortener-form').after(response);
+            }
+            copyToClipboard(link);
             $('#short-URL-container').show(500);
             scrollToBottom();
-        })
-        .catch(error => {
-            alert('An error ocurred.');
-        });
+        }
+    });
 }
 
 function scrollToBottom() {
