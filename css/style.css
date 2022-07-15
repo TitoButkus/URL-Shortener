@@ -41,7 +41,7 @@ footer {
 
 @media screen and (min-width: 768px) {
     .grid {
-        grid-template-columns: 70% 30%;
+        grid-template-columns: calc(70% - var(--grid-spacing-horizontal) / 2 ) calc(30% - var(--grid-spacing-horizontal) / 2);
     }
 }
 

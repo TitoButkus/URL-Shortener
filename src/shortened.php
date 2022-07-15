@@ -1,6 +1,6 @@
 <?php
 
-$shortened_url = $_GET['short_URL'];
+$shortened_url = filter_var($_GET['short_URL'], FILTER_SANITIZE_URL);
 
 ?>
 
